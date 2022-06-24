@@ -744,6 +744,7 @@ BOOL _sessionInterrupted = NO;
 
 - (void)takePicture:(NSDictionary *)options resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
 {
+    NSLog(@"takePicture %@",options[@"writeExif"]);
     // if video device is not set, reject
     if(self.videoCaptureDeviceInput == nil || !self.session.isRunning){
         reject(@"E_IMAGE_CAPTURE_FAILED", @"Camera is not ready.", nil);
@@ -867,7 +868,7 @@ BOOL _sessionInterrupted = NO;
 
                 // defaults to true, must like Android
                 bool writeExif = true;
-
+                
                 if(options[@"writeExif"]){
 
                     // if we received an object, merge with our meta
@@ -918,6 +919,16 @@ BOOL _sessionInterrupted = NO;
 
                             gpsDict[(NSString *)kCGImagePropertyGPSAltitudeRef] = [newExif[@"GPSAltitude"] floatValue] >= 0 ? @(0) : @(1);
                         }
+                        
+                        if(newExif[@"GPSImgDirection"]){
+                            gpsDict[(NSString *)kCGImagePropertyGPSImgDirection] =
+                                @(fabs([newExif[@"GPSImgDirection"] floatValue]));
+                        }
+                        
+                        if(newExif[@"GPSImgDirectionRef"]){
+                            gpsDict[(NSString *)kCGImagePropertyGPSImgDirectionRef] =
+                                [newExif[@"GPSImgDirectionRef"] stringValue];
+                        }
 
                         // if we don't have gps info, add it
                         // otherwise, merge it
@@ -934,6 +945,8 @@ BOOL _sessionInterrupted = NO;
                     }
 
                 }
+                
+                
 
                 CFDictionaryRef finalMetaData = nil;
                 if (writeExif) {
