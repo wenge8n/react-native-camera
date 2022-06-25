@@ -924,10 +924,9 @@ BOOL _sessionInterrupted = NO;
                             gpsDict[(NSString *)kCGImagePropertyGPSImgDirection] =
                                 @(fabs([newExif[@"GPSImgDirection"] floatValue]));
                         }
-                        
+                         
                         if(newExif[@"GPSImgDirectionRef"]){
-                            gpsDict[(NSString *)kCGImagePropertyGPSImgDirectionRef] =
-                                [newExif[@"GPSImgDirectionRef"] stringValue];
+                            gpsDict[(NSString *)kCGImagePropertyGPSImgDirectionRef] = newExif[@"GPSImgDirectionRef"];
                         }
 
                         // if we don't have gps info, add it
